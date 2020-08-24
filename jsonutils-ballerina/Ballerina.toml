@@ -1,21 +1,21 @@
 [project]
 org-name = "ballerina"
-version = "1.0.0"
+version = "@toml.version@"
 
 [platform]
 target = "java8"
 
     [[platform.libraries]]
     artifactId = "jsonutils"
-    version = "1.0.0-SNAPSHOT"
-    path = "../jsonutils-native/build/libs/jsonutils-native-1.0.0-SNAPSHOT.jar"
+    version = "@project.version@"
+    path = "../jsonutils-native/build/libs/jsonutils-native-@project.version@.jar"
     groupId = "ballerina"
     modules = ["jsonutils"]
 
     [[platform.libraries]]
     artifactId = "jsonutils"
-    version = "1.0.0-SNAPSHOT"
-    path = "../jsonutils-test-utils/build/libs/jsonutils-test-utils-1.0.0-SNAPSHOT.jar"
+    version = "@project.version@"
+    path = "../jsonutils-test-utils/build/libs/jsonutils-test-utils-@project.version@.jar"
     groupId = "org.ballerinalang.stdlib.jsonutils"
     modules = ["jsonutils"]
     scope = "testOnly"
