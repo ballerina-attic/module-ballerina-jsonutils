@@ -22,22 +22,23 @@ This module provides utility functions to manipulate the built-in `json` data ty
 
 ### Building the Source
 
-Execute the commands below to build from the source.
+Execute the commands below to build from source.
 
 1. To build the library:
-```shell script
-./gradlew clean build
-```
 
-2. To build the module without the tests:
-```shell script
-./gradlew clean build -PskipBallerinaTests
-```
+        ./gradlew clean build
 
-3. To debug the tests:
-```shell script
-./gradlew clean test -PdebugBallerina=<port>
-```
+2. To run the integration tests:
+
+        ./gradlew clean test
+
+3. To build the module without the tests:
+
+        ./gradlew clean build -x test
+
+4. To debug the tests:
+
+        ./gradlew clean build -Pdebug=<port>
 
 ## Contributing to Ballerina
 
