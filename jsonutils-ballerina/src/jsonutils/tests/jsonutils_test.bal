@@ -191,7 +191,7 @@ function testXmlToJsonToPInfo() {
         xml `<PInfo><name>Jane</name><age>33</age><gender>not-specified</gender></PInfo>`);
     json k = checkpanic j.PInfo;
     PInfo p = checkpanic k.cloneWithType(PInfo);
-    test:assertEquals(p.toString(), "name=Jane age=33 gender=not-specified", 
+    test:assertEquals(p.toString(), "{\"name\":\"Jane\",\"age\":\"33\",\"gender\":\"not-specified\"}",
     msg = "testXmlToJsonToPInfo result incorrect");
 }
 
@@ -325,9 +325,9 @@ function testComplexXMLtoJson() {
 }
 
 public function convertToJson(string xmlStr) returns string = @java:Method {
-    class: "org/ballerinalang/stdlib/jsonutils/testutils/JsonUtilsTestUtils"
+    'class: "org/ballerinalang/stdlib/jsonutils/testutils/JsonUtilsTestUtils"
 } external;
 
 public function convertChildrenToJson(string xmlStr) returns string = @java:Method {
-    class: "org/ballerinalang/stdlib/jsonutils/testutils/JsonUtilsTestUtils"
+    'class: "org/ballerinalang/stdlib/jsonutils/testutils/JsonUtilsTestUtils"
 } external;
