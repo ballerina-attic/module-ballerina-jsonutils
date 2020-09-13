@@ -68,7 +68,7 @@ public class XmlToJsonConverter {
      */
     public static Object convertToJSON(XMLValue xml, String attributePrefix, boolean preserveNamespaces) {
         if (xml instanceof XMLText) {
-            return JSONParser.parse("\"" + ((XMLText) xml).stringValue() + "\"");
+            return JSONParser.parse("\"" + ((XMLText) xml).stringValue(null) + "\"");
         } else if (xml instanceof XMLItem) {
             return convertElement((XMLItem) xml, attributePrefix, preserveNamespaces);
         } else if (xml instanceof XMLSequence) {
