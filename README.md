@@ -2,7 +2,7 @@ Ballerina JsonUtils Library
 ===================
 
 [![Build Master Branch](https://github.com/ballerina-platform/module-ballerina-jsonutils/workflows/Build/badge.svg)](https://github.com/ballerina-platform/module-ballerina-jsonutils/actions?query=workflow%3ABuild%22)
-[![Daily Build](https://github.com/ballerina-platform/module-ballerina-jsonutils/workflows/Daily%20Build/badge.svg)](https://github.com/ballerina-platform/module-ballerina-jsonutils/actions?query=workflow%3ADaily+Build%22)
+[![Daily build](https://github.com/ballerina-platform/module-ballerina-jsonutils/workflows/Daily%20build/badge.svg)](https://github.com/ballerina-platform/module-ballerina-jsonutils/actions?query=workflow%3ADaily+Build%22)
 [![GitHub Last Commit](https://img.shields.io/github/last-commit/ballerina-platform/module-ballerina-jsonutils.svg)](https://github.com/ballerina-platform/module-ballerina-jsonutils/commits/master)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
