@@ -18,10 +18,9 @@
 package org.ballerinalang.stdlib.jsonutils.testutils;
 
 import org.ballerinalang.jvm.XMLFactory;
+import org.ballerinalang.jvm.api.BStringUtils;
+import org.ballerinalang.jvm.api.values.BString;
 import org.ballerinalang.jvm.values.XMLValue;
-import org.ballerinalang.jvm.values.utils.StringUtils;
-import org.ballerinalang.jvm.values.api.BString;
-
 import org.ballerinalang.stdlib.jsonutils.XmlToJsonConverter;
 
 /**
@@ -34,14 +33,14 @@ public class JsonUtilsTestUtils {
     public static BString convertToJson(BString xmlStr) {
         XMLValue parse = XMLFactory.parse(xmlStr.toString());
         Object json = XmlToJsonConverter.convertToJSON(parse, "@", true);
-        String jsonString = StringUtils.getJsonString(json);
-        return org.ballerinalang.jvm.StringUtils.fromString(jsonString);
+        String jsonString = BStringUtils.getJsonString(json);
+        return org.ballerinalang.jvm.api.BStringUtils.fromString(jsonString);
     }
 
     public static BString convertChildrenToJson(BString xmlStr) {
         XMLValue parse = XMLFactory.parse(xmlStr.toString()).children();
         Object json = XmlToJsonConverter.convertToJSON(parse, "@", true);
-        String jsonString = StringUtils.getJsonString(json);
-        return org.ballerinalang.jvm.StringUtils.fromString(jsonString);
+        String jsonString = BStringUtils.getJsonString(json);
+        return org.ballerinalang.jvm.api.BStringUtils.fromString(jsonString);
     }
 }

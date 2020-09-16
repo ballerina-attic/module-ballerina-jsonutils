@@ -18,12 +18,12 @@
 
 package org.ballerinalang.stdlib.jsonutils;
 
-import org.ballerinalang.jvm.BallerinaErrors;
-import org.ballerinalang.jvm.StringUtils;
+import org.ballerinalang.jvm.api.BErrorCreator;
+import org.ballerinalang.jvm.api.BStringUtils;
+import org.ballerinalang.jvm.api.values.BMap;
+import org.ballerinalang.jvm.api.values.BString;
 import org.ballerinalang.jvm.util.exceptions.BLangExceptionHelper;
-import org.ballerinalang.jvm.values.MapValue;
 import org.ballerinalang.jvm.values.XMLValue;
-import org.ballerinalang.jvm.values.api.BString;
 
 /**
  * Converts a XML to the corresponding JSON representation.
@@ -35,18 +35,18 @@ public class FromXML {
     private static final String OPTIONS_ATTRIBUTE_PREFIX = "attributePrefix";
     private static final String OPTIONS_PRESERVE_NS = "preserveNamespaces";
 
-    public static Object fromXML(XMLValue xml, MapValue<?, ?> options) {
+    public static Object fromXML(XMLValue xml, BMap<?, ?> options) {
         try {
-            String attributePrefix = ((BString) options.get(StringUtils.fromString(OPTIONS_ATTRIBUTE_PREFIX)))
+            String attributePrefix = ((BString) options.get(BStringUtils.fromString(OPTIONS_ATTRIBUTE_PREFIX)))
                     .getValue();
-            boolean preserveNamespaces = ((Boolean) options.get(StringUtils.fromString(OPTIONS_PRESERVE_NS)));
+            boolean preserveNamespaces = ((Boolean) options.get(BStringUtils.fromString(OPTIONS_PRESERVE_NS)));
             return XmlToJsonConverter.convertToJSON(xml, attributePrefix, preserveNamespaces);
         } catch (Exception e) {
             try {
                 // todo: fix after fixing `handleXMLException`
                 BLangExceptionHelper.handleXMLException("{ballerina/jsonutils}Error", e);
             } catch (Exception ex) {
-                return BallerinaErrors.createError(StringUtils.fromString(ex.getMessage()));
+                return BErrorCreator.createError(BStringUtils.fromString(ex.getMessage()));
             }
         }
         return null;
