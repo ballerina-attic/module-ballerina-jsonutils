@@ -55,8 +55,6 @@ allprojects {
                 password System.getenv("packagePAT")
             }
         }
-
-      
     }
 }
 
