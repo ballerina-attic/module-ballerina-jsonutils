@@ -36,4 +36,3 @@ compileJava {
         classpath = files()
     }
 }
-
