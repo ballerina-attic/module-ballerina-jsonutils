@@ -17,7 +17,7 @@
  */
 
 module io.ballerina.stdlib.jsonutils {
-    requires io.ballerina.jvm;
+    requires io.ballerina.runtime;
     requires java.xml;
     exports org.ballerinalang.stdlib.jsonutils;
 }

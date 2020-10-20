@@ -18,8 +18,8 @@
 
 package org.ballerinalang.stdlib.jsonutils;
 
-import org.ballerinalang.jvm.JSONUtils;
-import org.ballerinalang.jvm.values.TableValueImpl;
+import io.ballerina.runtime.JSONUtils;
+import io.ballerina.runtime.values.TableValueImpl;
 
 /**
  * Converts a given table to its JSON representation.
