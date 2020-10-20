@@ -18,12 +18,12 @@
 
 package org.ballerinalang.stdlib.jsonutils;
 
-import org.ballerinalang.jvm.api.BErrorCreator;
-import org.ballerinalang.jvm.api.BStringUtils;
-import org.ballerinalang.jvm.api.values.BMap;
-import org.ballerinalang.jvm.api.values.BString;
-import org.ballerinalang.jvm.util.exceptions.BLangExceptionHelper;
-import org.ballerinalang.jvm.values.XMLValue;
+import io.ballerina.runtime.api.ErrorCreator;
+import io.ballerina.runtime.api.StringUtils;
+import io.ballerina.runtime.api.values.BMap;
+import io.ballerina.runtime.api.values.BString;
+import io.ballerina.runtime.util.exceptions.BLangExceptionHelper;
+import io.ballerina.runtime.values.XMLValue;
 
 /**
  * Converts a XML to the corresponding JSON representation.
@@ -37,16 +37,16 @@ public class FromXML {
 
     public static Object fromXML(XMLValue xml, BMap<?, ?> options) {
         try {
-            String attributePrefix = ((BString) options.get(BStringUtils.fromString(OPTIONS_ATTRIBUTE_PREFIX)))
+            String attributePrefix = ((BString) options.get(StringUtils.fromString(OPTIONS_ATTRIBUTE_PREFIX)))
                     .getValue();
-            boolean preserveNamespaces = ((Boolean) options.get(BStringUtils.fromString(OPTIONS_PRESERVE_NS)));
+            boolean preserveNamespaces = ((Boolean) options.get(StringUtils.fromString(OPTIONS_PRESERVE_NS)));
             return XmlToJsonConverter.convertToJSON(xml, attributePrefix, preserveNamespaces);
         } catch (Exception e) {
             try {
                 // todo: fix after fixing `handleXMLException`
                 BLangExceptionHelper.handleXMLException("{ballerina/jsonutils}Error", e);
             } catch (Exception ex) {
-                return BErrorCreator.createError(BStringUtils.fromString(ex.getMessage()));
+                return ErrorCreator.createError(StringUtils.fromString(ex.getMessage()));
             }
         }
         return null;

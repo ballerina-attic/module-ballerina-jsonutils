@@ -17,23 +17,23 @@
  */
 package org.ballerinalang.stdlib.jsonutils;
 
-import org.ballerinalang.jvm.JSONParser;
-import org.ballerinalang.jvm.XMLNodeType;
-import org.ballerinalang.jvm.api.BValueCreator;
-import org.ballerinalang.jvm.api.values.BMap;
-import org.ballerinalang.jvm.api.values.BString;
-import org.ballerinalang.jvm.api.values.BXML;
-import org.ballerinalang.jvm.types.BArrayType;
-import org.ballerinalang.jvm.types.BMapType;
-import org.ballerinalang.jvm.types.BPackage;
-import org.ballerinalang.jvm.types.BType;
-import org.ballerinalang.jvm.types.BTypes;
-import org.ballerinalang.jvm.types.TypeConstants;
-import org.ballerinalang.jvm.values.ArrayValueImpl;
-import org.ballerinalang.jvm.values.XMLItem;
-import org.ballerinalang.jvm.values.XMLSequence;
-import org.ballerinalang.jvm.values.XMLText;
-import org.ballerinalang.jvm.values.XMLValue;
+import io.ballerina.runtime.JSONParser;
+import io.ballerina.runtime.XMLNodeType;
+import io.ballerina.runtime.api.Module;
+import io.ballerina.runtime.api.PredefinedTypes;
+import io.ballerina.runtime.api.TypeConstants;
+import io.ballerina.runtime.api.ValueCreator;
+import io.ballerina.runtime.api.types.Type;
+import io.ballerina.runtime.api.values.BMap;
+import io.ballerina.runtime.api.values.BString;
+import io.ballerina.runtime.api.values.BXML;
+import io.ballerina.runtime.types.BArrayType;
+import io.ballerina.runtime.types.BMapType;
+import io.ballerina.runtime.values.ArrayValueImpl;
+import io.ballerina.runtime.values.XMLItem;
+import io.ballerina.runtime.values.XMLSequence;
+import io.ballerina.runtime.values.XMLText;
+import io.ballerina.runtime.values.XMLValue;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -44,7 +44,7 @@ import java.util.Map;
 
 import javax.xml.namespace.QName;
 
-import static org.ballerinalang.jvm.api.BStringUtils.fromString;
+import static io.ballerina.runtime.api.StringUtils.fromString;
 
 /**
  * Convert Ballerina XML value into respective JSON value.
@@ -52,10 +52,10 @@ import static org.ballerinalang.jvm.api.BStringUtils.fromString;
  */
 public class XmlToJsonConverter {
 
-    private static final BType JSON_MAP_TYPE =
-            new BMapType(TypeConstants.MAP_TNAME, BTypes.typeJSON, new BPackage(null, null, null));
+    private static final Type JSON_MAP_TYPE =
+            new BMapType(TypeConstants.MAP_TNAME, PredefinedTypes.TYPE_JSON, new Module(null, null, null));
     private static final String XMLNS = "xmlns";
-    private static final BArrayType JSON_ARRAY_TYPE = new BArrayType(BTypes.typeJSON);
+    private static final BArrayType JSON_ARRAY_TYPE = new BArrayType(PredefinedTypes.TYPE_JSON);
     public static final int NS_PREFIX_BEGIN_INDEX = XMLItem.XMLNS_URL_PREFIX.length();
 
     /**
@@ -99,7 +99,7 @@ public class XmlToJsonConverter {
         BMap<BString, Object> rootNode = newJsonMap();
         LinkedHashMap<String, String> attributeMap = collectAttributesAndNamespaces(xmlItem, preserveNamespaces);
         String keyValue = getElementKey(xmlItem, preserveNamespaces);
-        Object children = convertXMLSequence(xmlItem.getChildrenSeq(), attributePrefix, preserveNamespaces);
+        Object children = convertXMLSequence((XMLSequence)xmlItem.getChildrenSeq(), attributePrefix, preserveNamespaces);
 
         if (children == null) {
             if (attributeMap.isEmpty()) {
@@ -279,11 +279,11 @@ public class XmlToJsonConverter {
     }
 
     public static ArrayValueImpl newJsonListFrom(List<Object> items) {
-        return new ArrayValueImpl(items.toArray(), new BArrayType(BTypes.typeJSON));
+        return new ArrayValueImpl(items.toArray(), new BArrayType(PredefinedTypes.TYPE_JSON));
     }
 
     private static BMap<BString, Object> newJsonMap() {
-        return BValueCreator.createMapValue(JSON_MAP_TYPE);
+        return ValueCreator.createMapValue(JSON_MAP_TYPE);
     }
 
     /**
