@@ -18,8 +18,8 @@
 
 package org.ballerinalang.stdlib.jsonutils;
 
-import io.ballerina.runtime.JSONUtils;
-import io.ballerina.runtime.values.TableValueImpl;
+import io.ballerina.runtime.api.utils.JsonUtils;
+import io.ballerina.runtime.api.values.BTable;
 
 /**
  * Converts a given table to its JSON representation.
@@ -28,8 +28,8 @@ import io.ballerina.runtime.values.TableValueImpl;
  */
 public class FromTable {
 
-    public static Object fromTable(TableValueImpl tableValue) {
-        return JSONUtils.toJSON(tableValue);
+    public static Object fromTable(BTable tableValue) {
+        return JsonUtils.parse(tableValue);
     }
 
     private FromTable() {
