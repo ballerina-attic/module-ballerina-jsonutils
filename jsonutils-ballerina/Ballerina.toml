@@ -1,21 +1,18 @@
-[project]
-org-name = "ballerina"
+[package]
+org = "ballerina"
+name = "jsonutils"
 version = "@toml.version@"
 
-[platform]
-target = "java11"
+[[platform.java11.dependency]]
+path = "../jsonutils-native/build/libs/jsonutils-native-@project.version@.jar"
+groupId = "ballerina"
+artifactId = "jsonutils"
+version = "@project.version@"
 
-    [[platform.libraries]]
-    artifactId = "jsonutils"
-    version = "@project.version@"
-    path = "../jsonutils-native/build/libs/jsonutils-native-@project.version@.jar"
-    groupId = "ballerina"
-    modules = ["jsonutils"]
+[[platform.java11.dependency]]
+path = "../jsonutils-test-utils/build/libs/jsonutils-test-utils-@project.version@.jar"
+groupId = "org.ballerinalang.stdlib.jsonutils"
+artifactId = "jsonutils"
+version = "@project.version@"
+scope = "testOnly"
 
-    [[platform.libraries]]
-    artifactId = "jsonutils"
-    version = "@project.version@"
-    path = "../jsonutils-test-utils/build/libs/jsonutils-test-utils-@project.version@.jar"
-    groupId = "org.ballerinalang.stdlib.jsonutils"
-    modules = ["jsonutils"]
-    scope = "testOnly"
