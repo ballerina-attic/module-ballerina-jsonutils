@@ -98,7 +98,8 @@ public class XmlToJsonConverter {
         BMap<BString, Object> rootNode = newJsonMap();
         LinkedHashMap<String, String> attributeMap = collectAttributesAndNamespaces(xmlItem, preserveNamespaces);
         String keyValue = getElementKey(xmlItem, preserveNamespaces);
-        Object children = convertBXmlSequence((BXmlSequence)xmlItem.getChildrenSeq(), attributePrefix, preserveNamespaces);
+        Object children = convertBXmlSequence((BXmlSequence) xmlItem.getChildrenSeq(),
+                attributePrefix, preserveNamespaces);
 
         if (children == null) {
             if (attributeMap.isEmpty()) {
