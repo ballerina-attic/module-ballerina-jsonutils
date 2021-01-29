@@ -1,16 +1,14 @@
 name: Publish release
 
 on:
+    workflow_dispatch:
     repository_dispatch:
         types: [ stdlib-release-pipeline ]
-
-    workflow_dispatch:
 
 jobs:
     publish-release:
         runs-on: ubuntu-latest
         if: github.repository_owner == 'ballerina-platform'
-
         steps:
             -   uses: actions/checkout@v2
             -   name: Set up JDK 11
