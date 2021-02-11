@@ -19,6 +19,19 @@ import org.apache.tools.ant.taskdefs.condition.Os
 
 description = 'Ballerina - Jsonutils Ballerina Generator'
 
+def packageName = "jsonutils"
+def packageOrg = "ballerina"
+def ballerinaConfigFile = new File("$project.projectDir/Ballerina.toml")
+def artifactBallerinaDocs = file("$project.projectDir/build/docs_parent/")
+def artifactCacheParent = file("$project.projectDir/build/cache_parent/")
+def artifactLibParent = file("$project.projectDir/build/lib_parent/")
+def artifactCodeCoverageReport = file("$project.projectDir/target/cache/tests_cache/coverage/ballerina.exec")
+def tomlVersion = project.version.replace("-SNAPSHOT", "")
+def ballerinaCentralAccessToken = System.getenv('BALLERINA_CENTRAL_ACCESS_TOKEN')
+def distributionPath =  project.projectDir.absolutePath + "/build/target/extracted-distributions/jballerina-tools-zip/jballerina-tools-${ballerinaLangVersion}"
+def distributionBinPath = distributionPath + "/bin"
+def originalConfig = ballerinaConfigFile.text
+
 configurations {
     jbalTools
 }
@@ -50,20 +63,7 @@ task unpackJballerinaTools(type: Copy) {
     }
 }
 
-def packageName = "jsonutils"
-def packageOrg = "ballerina"
-def ballerinaConfigFile = new File("$project.projectDir/Ballerina.toml")
-def artifactBallerinaDocs = file("$project.projectDir/build/docs_parent/")
-def artifactCacheParent = file("$project.projectDir/build/cache_parent/")
-def artifactLibParent = file("$project.projectDir/build/lib_parent/")
-def artifactCodeCoverageReport = file("$project.projectDir/target/cache/tests_cache/coverage/ballerina.exec")
-def tomlVersion = project.version.split("-")[0]
-def ballerinaCentralAccessToken = System.getenv('BALLERINA_CENTRAL_ACCESS_TOKEN')
-def distributionPath =  project.projectDir.absolutePath + "/build/target/extracted-distributions/jballerina-tools-zip/jballerina-tools-${ballerinaLangVersion}"
-def distributionBinPath = distributionPath + "/bin"
-def originalConfig = ballerinaConfigFile.text
-
-task updateTomlFile {
+task updateTomlVersions {
     doLast {
         def newConfig = ballerinaConfigFile.text.replace("@project.version@", project.version)
         newConfig = newConfig.replace("@toml.version@", tomlVersion)
@@ -82,6 +82,7 @@ def groupParams = ""
 def disableGroups = ""
 def debugParams = ""
 def balJavaDebugParam = ""
+def testParams = ""
 
 task initializeVariables {
     if (project.hasProperty("groups")) {
@@ -96,16 +97,27 @@ task initializeVariables {
     if (project.hasProperty("balJavaDebug")) {
         balJavaDebugParam = "BAL_JAVA_DEBUG=${project.findProperty("balJavaDebug")}"
     }
+
+    gradle.taskGraph.whenReady { graph ->
+        if (graph.hasTask(":${packageName}-ballerina:build") || graph.hasTask(":${packageName}-ballerina:publish"))  {
+            ballerinaTest.enabled = false
+        }
+
+        if (graph.hasTask(":${packageName}-ballerina:test")) {
+            testParams = "--code-coverage --includes=*"
+        } else {
+            testParams = "--skip-tests"
+        }
+
+        if (graph.hasTask(":${packageName}-ballerina:publish")) {
+            ballerinaPublish.enabled = true
+        } else {
+            ballerinaPublish.enabled = false
+        }
+    }
 }
 
 task ballerinaTest {
-    dependsOn(":jsonutils-native:build")
-    dependsOn(":jsonutils-test-utils:build")
-    dependsOn(unpackJballerinaTools)
-    dependsOn(updateTomlFile)
-    dependsOn(initializeVariables)
-    finalizedBy(revertTomlFile)
-
     doLast {
         exec {
             workingDir project.projectDir
@@ -119,30 +131,8 @@ task ballerinaTest {
     }
 }
 
-test {
-    dependsOn(ballerinaTest)
-}
-
 task ballerinaBuild {
     inputs.dir file(project.projectDir)
-    dependsOn(":jsonutils-native:build")
-    dependsOn(":jsonutils-test-utils:build")
-    dependsOn(unpackJballerinaTools)
-    dependsOn(updateTomlFile)
-    dependsOn(updateTomlFile)
-    dependsOn(test)
-    dependsOn(initializeVariables)
-    finalizedBy(revertTomlFile)
-
-    def testParams = "--skip-tests"
-    gradle.taskGraph.whenReady { graph ->
-        if (graph.hasTask(':jsonutils-ballerina:build') || graph.hasTask(':jsonutils-ballerina:publish')) {
-            ballerinaTest.enabled = false
-        }
-        if (graph.hasTask(':jsonutils-ballerina:test')) {
-            testParams = "--code-coverage --includes=*"
-        }
-    }
 
     doLast {
         // Build and populate caches
@@ -166,20 +156,6 @@ task ballerinaBuild {
             into file("$artifactCacheParent/cache/")
         }
 
-        // Publish to central
-        if (!project.version.endsWith('-SNAPSHOT') && ballerinaCentralAccessToken != null && project.hasProperty("publishToCentral")) {
-            println("Publishing to the ballerina central..")
-            exec {
-                workingDir project.projectDir
-                environment "JAVA_OPTS", "-DBALLERINA_DEV_COMPILE_BALLERINA_ORG=true"
-                if (Os.isFamily(Os.FAMILY_WINDOWS)) {
-                    commandLine 'cmd', '/c', "$distributionBinPath/bal.bat push && exit %%ERRORLEVEL%%"
-                } else {
-                    commandLine 'sh', '-c', "$distributionBinPath/bal push"
-                }
-            }
-
-        }
         // Doc creation and packing
         exec {
             workingDir project.projectDir
@@ -199,6 +175,24 @@ task ballerinaBuild {
     outputs.dir artifactCacheParent
     outputs.dir artifactBallerinaDocs
     outputs.dir artifactLibParent
+}
+
+task ballerinaPublish {
+    doLast {
+        if (ballerinaCentralAccessToken != null) {
+            println("Publishing to the ballerina central..")
+            exec {
+                workingDir project.projectDir
+                environment "JAVA_OPTS", "-DBALLERINA_DEV_COMPILE_BALLERINA_ORG=true"
+                if (Os.isFamily(Os.FAMILY_WINDOWS)) {
+                    commandLine 'cmd', '/c', "$distributionBinPath/bal.bat push && exit %%ERRORLEVEL%%"
+                } else {
+                    commandLine 'sh', '-c', "$distributionBinPath/bal push"
+                }
+            }
+
+        }
+    }
 }
 
 task createArtifactZip(type: Zip) {
@@ -230,6 +224,22 @@ publishing {
     }
 }
 
-build {
-    dependsOn(ballerinaBuild)
-}
+updateTomlVersions.dependsOn unpackJballerinaTools
+
+ballerinaTest.dependsOn updateTomlVersions
+ballerinaTest.dependsOn initializeVariables
+ballerinaTest.dependsOn ":${packageName}-native:build"
+ballerinaTest.dependsOn ":${packageName}-test-utils:build"
+ballerinaTest.finalizedBy revertTomlFile
+test.dependsOn ballerinaTest
+
+ballerinaBuild.dependsOn test
+ballerinaBuild.dependsOn updateTomlVersions
+ballerinaBuild.dependsOn initializeVariables
+ballerinaBuild.dependsOn ":${packageName}-native:build"
+ballerinaTest.dependsOn ":${packageName}-test-utils:build"
+ballerinaBuild.finalizedBy revertTomlFile
+build.dependsOn ballerinaBuild
+
+ballerinaPublish.dependsOn ballerinaBuild
+publish.dependsOn ballerinaPublish
